@@ -1,9 +1,6 @@
-/*
-  Glass is a namespace full of helpers for making stream updates with lens output less cumbersome.
-*/
-
 var Glass =
 (() => {
+
   function component(o){
     return {
       oninit (vnode){

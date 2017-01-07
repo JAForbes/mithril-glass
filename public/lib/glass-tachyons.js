@@ -1,6 +1,6 @@
 /*
 
-  Combine lense updates with existing attributes on vnodes and you get theming.
+  Combine lense updates with existing attributes on vnodes and you get theming!
   
   This is an example of using lenses to update the className field on a vnode
   for combination with atomic css libraries e.g. tachyons.
