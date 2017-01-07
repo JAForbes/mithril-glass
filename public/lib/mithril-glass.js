@@ -35,7 +35,7 @@ var Glass =
   
   // lenses to safely access vnode.attrs & vnode.className
   lens.attrs = 
-    R.lens( R.compose( R.or({}), R.prop('attrs')), R.assoc('attrs'))
+    R.lens( R.compose( R.or(R.__, {}), R.prop('attrs')), R.assoc('attrs'))
   
   lens.className = 
     R.lens( R.propOr('', 'className'),  R.assoc('className') )
