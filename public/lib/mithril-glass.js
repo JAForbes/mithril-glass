@@ -1,5 +1,6 @@
 var Glass =
 (() => {
+
   function component(o){
     return {
       oninit (vnode){
@@ -13,15 +14,12 @@ var Glass =
     }
   }
   
+  
   const Over = state => lens => f => state(R.over(lens, f, state() ))
   const View = state => lens => R.view(lens, state())
   const Set = state => lens => x => state(R.set(lens, x, state() ))
   
-  
-  var attrs = R.lensProp('attrs')
-  var className = R.lens( R.propOr([], 'className'),  R.assoc('className') )
-  var classList = R.compose(attrs, className, R.lens(R.split(' '), R.join(' ')) )
-  
+  // Creates a state stream and attaches some bound lens methods to the instance
   function State(...args){
     
     const state = flyd.stream(...args)
@@ -35,18 +33,28 @@ var Glass =
   
   const lens = R.lens
   
-  lens.Over = Over
-  lens.View = View
-  lens.Set = Set
-  lens.attrs = attrs
-  lens.className = className
-  lens.classList = classList
+  // lenses to safely access vnode.attrs & vnode.className
+  lens.attrs = 
+    R.lens( R.compose( R.or(R.__, {}), R.prop('attrs')), R.assoc('attrs'))
+  
+  lens.className = 
+    R.lens( R.propOr('', 'className'),  R.assoc('className') )
+  
+  // a formatting lens that goes from str[] to str
+  lens.classList = 
+    R.lens( R.compose( R.tail, R.split(' ')), R.join(' '))
+  
+  // essential lens operators
   lens.view = R.view
   lens.over = R.over
   lens.set = R.set 
+  
+  // common lens factory functions
   lens.prop = R.lensProp
   lens.path = R.lensPath
   lens.index = R.lensIndex
+  
+  // a formatting lens for focusing on JSON
   lens.json = R.lens(x => JSON.stringify(x, null, 2), JSON.parse)
   
   return {
