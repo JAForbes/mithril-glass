@@ -31,35 +31,59 @@ var Glass =
     return state
   }
   
-  const lens = R.lens
+  function Lens(get,set){
+    const lens = R.lens(get, set)
+    lens.view = R.view(lens)
+    lens.over = R.over(lens)
+    lens.set = R.set(lens)
+    return lens
+  }
+  
+  function LensProp(property){
+    return Lens( R.prop(property), R.assoc(property))
+  }
+  
+  function LensPath(path){
+    return Lens( R.path(property), R.assocPath(property))
+  }
+  
+  function LensIndex(n){
+    return Lens(R.nth(n), R.update(n))
+  }
+  
+  function LensCompose(...lenses){
+    const lens = R.compose(...lenses)
+    lens.view = R.view(lens)
+    lens.over = R.over(lens)
+    lens.set = R.set(lens)
+    return lens
+  }
   
   // lenses to safely access vnode.attrs & vnode.className
-  lens.attrs = 
+  Lens.attrs = 
     R.lens( R.compose( R.or(R.__, {}), R.prop('attrs')), R.assoc('attrs'))
   
-  lens.className = 
+  Lens.className = 
     R.lens( R.propOr('', 'className'),  R.assoc('className') )
   
   // a formatting lens that goes from str[] to str
-  lens.classList = 
+  Lens.classList = 
     R.lens( R.compose( R.tail, R.split(' ')), R.join(' '))
   
   // essential lens operators
-  lens.view = R.view
-  lens.over = R.over
-  lens.set = R.set 
+  Lens.view = R.view
+  Lens.over = R.over
+  Lens.set = R.set 
   
   // common lens factory functions
-  lens.prop = R.lensProp
-  lens.path = R.lensPath
-  lens.index = R.lensIndex
-  
-  // a formatting lens for focusing on JSON
-  lens.json = R.lens(x => JSON.stringify(x, null, 2), JSON.parse)
-  
+  Lens.prop = LensProp
+  Lens.path = LensPath
+  Lens.index = LensIndex
+  Lens.compose = LensCompose
+
   return {
     component
-    , lens
+    , Lens: Lens
     , State
     , compose: R.compose
     , pipe: R.pipe
