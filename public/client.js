@@ -24,12 +24,16 @@ function Main(){
   var editedState = G.State()
   flyd.on(editedState, state)
   
+  
+  const blueGrower = tachyons.update(['blue', 'grow-large'])
+  const redDimmerChildren = tachyons.updateChildren(['red', 'dim'])
+  
   return function(){
     return [
-      counter(count, state)
+      redDimmerChildren(counter(count, state))
       ,label(count, state)
       ,tabPane(tabContent, tabId, state)
-      ,m('button', { onclick: () => state( editedState() ) }, 'Save Edits')
+      ,blueGrower(m('button', { onclick: () => state( editedState() ) }, 'Save Edits'))
       ,m('pre[contenteditable]'
         , { oninput: m.withAttr('innerText', editedState.set(json) ) }
         , m.trust( editedState.view( json) ))

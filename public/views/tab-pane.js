@@ -17,12 +17,9 @@ const tabPane = (tabContent, tabId, state) => {
   }
 
   return m('div'
-      ,m('ul'
-        ,tabs.map(tab)
-        ,m('div'
-          ,currentTab.content
-        )
-      )
-      
+    ,m('ul'
+      ,tabs.map(tab)
+      ,m('div', currentTab.content)
+    )
   )
 }
