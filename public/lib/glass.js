@@ -15,18 +15,16 @@ var Glass =
   }
   
   
-  const Over = state => lens => f => state(R.over(lens, f, state() ))
-  const View = state => lens => R.view(lens, state())
-  const Set = state => lens => x => state(R.set(lens, x, state() ))
+  const Over = (get,set) => lens => f => set(R.over(lens, f, get() ))
+  const View = (get,set) => lens => R.view(lens, get())
+  const Set = (get,set) => lens => x => set(R.set(lens, x, get() ))
   
-  // Creates a state stream and attaches some bound lens methods to the instance
-  function State(...args){
-    
-    const state = flyd.stream(...args)
-    
-    state.set = Set(state)
-    state.view = View(state)
-    state.over = Over(state)
+  
+  function State(state, get, set){
+  
+    state.set = Set(get,set)
+    state.view = View(get,set)
+    state.over = Over(get,set)
     
     return state
   }
@@ -36,6 +34,16 @@ var Glass =
     lens.over = R.over(lens)
     lens.set = R.set(lens)
     return lens
+  }
+  
+  
+  function item( equality){
+    return Lens( 
+      R.compose( R.find(equality) )
+    ,function(demo, list){
+      var i = R.findIndex(equality, list) 
+      return Lens.index(i).set( demo, list )
+    })
   }
   
   const Lens = R.compose(_Lens, R.lens)
@@ -72,6 +80,7 @@ var Glass =
   Lens.compose = R.compose(_Lens,R.compose)
   Lens.iso = R.compose(_Lens, ramdaLens.iso)
   Lens.iso.from = ramdaLens.from
+  Lens.item = item
 
   return {
     component

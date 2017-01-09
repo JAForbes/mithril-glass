@@ -11,8 +11,10 @@
 
 const tabPane = (tabContent, tabId, initialTabIndex, state) => {
   
+  
   // Get the latest tabContent
   const tabs = state.view(tabContent)
+  
   
   // use the selected tab, or select the first tab
   // if none are selected
@@ -28,7 +30,6 @@ const tabPane = (tabContent, tabId, initialTabIndex, state) => {
         .concat( tabs.find(Boolean) )
         .find(Boolean)
       
-  
   const tab = (t, i) => {
     return m('li'
       , { tabIndex: initialTabIndex+i
@@ -130,4 +131,54 @@ tabPane.theme.Default = function(){
   
   return theme
   
+}
+
+tabPane.theme.Inline = function(){
+  
+  var ul = tabPane.ul
+  var li = tabPane.li
+  var x = tabPane.selected
+  var c = G.Lens.compose
+  var div = tabPane.div
+  
+  var style = G.Lens(R.propOr({}, 'style'), R.assoc('style'))
+  var css = c( G.Lens.attrs, style)
+  
+  var inlineTabs = G.Lens.setAll(
+    css.over(R.merge({ 
+      paddingLeft: '0.2em'
+      ,paddingRight: '0.2em'
+      ,display: 'inline'
+    }))
+    ,li
+  )
+  
+  var listReset = c( ul, css ).over(
+    R.merge({ 
+      listStyle: 'none' 
+      ,paddingLeft: '0em'
+      ,paddingBottom: '0.5em'
+    })
+  )
+  
+  var containerPadding = css.over(
+    R.merge({ padding: '1em' })  
+  )
+  
+  var selectedIndicator = c(x, css).over(
+    R.merge({
+      display: 'inline'
+      ,outline: '0px'
+      ,borderBottom: 'solid 1px black'
+    })
+  )
+  
+  var theme = R.compose(
+    listReset
+    ,inlineTabs
+    ,selectedIndicator
+    ,containerPadding
+  )
+  
+  return theme
 }
