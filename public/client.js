@@ -37,16 +37,8 @@ function Main(){
   // a copy of the state object with your updates included
   // we then have helper methods for pushing this state into the state stream
 
-  // a lens that can read/write to a `count` property on any object
-  var valueLens = Lens.prop('count')
   
-  // a lens that converts string's to Number's on write and read
-  var numberLens = Lens.iso(Number, Number)
-
-  // a composition of the above lenses
-  // we now have a lense that reads/writes from the count property
-  // but always transforms inputted values to Number's first
-  var count = Lens.compose(valueLens, numberLens)
+  var count = Lens.prop('count')
   
   // access the tabContent property of the state object
   var tabContent = Lens.prop('tabContent')
@@ -55,6 +47,7 @@ function Main(){
   
   
   var tabTheme = tabPane.theme.Default()
+  var tabPaneThemed = R.compose(tabTheme, tabPane)
   // Extremely experimental notion:
   // Use lenses to theme vnodes after the fact!
   // these functions can be used to add these classNames to the vnode
@@ -71,7 +64,7 @@ function Main(){
       ,label(count, state)
       
       
-      ,tabTheme(tabPane(tabContent, tabId, 0, state))
+      ,tabPaneThemed(tabContent, tabId, 0, state)
       
       // a button with blue text that grows on hover
       ,blueGrower(m('button', { onclick: () => state( editedState() ) }, 'Save Edits'))
