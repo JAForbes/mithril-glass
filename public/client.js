@@ -20,10 +20,10 @@ function Main(){
   var editedState = State()
   flyd.on(editedState, state)
   
-  // will use this builtin json lense to read/write our editedState tree to/from the page
+  // we'll use this builtin json lense to read/write our editedState tree to/from the page
   // a formatting lens for focusing on JSON
   var json = Lens.iso(x => JSON.stringify(x, null, 2), JSON.parse)
-  
+  var number = Lens.iso(Number, Number)
   
   // Once you have chosen how to structure your state
   // you define special getter/setters functions that 
@@ -38,13 +38,12 @@ function Main(){
   // we then have helper methods for pushing this state into the state stream
 
   
-  var count = Lens.prop('count')
+  var count = G.Lens.compose( Lens.prop('count'), number )
   
   // access the tabContent property of the state object
   var tabContent = Lens.prop('tabContent')
   // access the tabId property of the state object 
   var tabId = Lens.prop('tabId')
-  
   
   var tabTheme = tabPane.theme.Default()
   var tabPaneThemed = R.compose(tabTheme, tabPane)

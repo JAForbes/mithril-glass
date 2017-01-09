@@ -38,7 +38,6 @@ var Glass =
     return lens
   }
   
-  
   const Lens = R.compose(_Lens, R.lens)
   // lenses to safely access vnode.attrs & vnode.className
   Lens.attrs = 
