@@ -31,34 +31,15 @@ var Glass =
     return state
   }
   
-  function Lens(get,set){
-    const lens = R.lens(get, set)
+  function _Lens(lens){
     lens.view = R.view(lens)
     lens.over = R.over(lens)
     lens.set = R.set(lens)
     return lens
   }
   
-  function LensProp(property){
-    return Lens( R.prop(property), R.assoc(property))
-  }
   
-  function LensPath(path){
-    return Lens( R.path(property), R.assocPath(property))
-  }
-  
-  function LensIndex(n){
-    return Lens(R.nth(n), R.update(n))
-  }
-  
-  function LensCompose(...lenses){
-    const lens = R.compose(...lenses)
-    lens.view = R.view(lens)
-    lens.over = R.over(lens)
-    lens.set = R.set(lens)
-    return lens
-  }
-  
+  const Lens = R.compose(_Lens, R.lens)
   // lenses to safely access vnode.attrs & vnode.className
   Lens.attrs = 
     R.lens( R.compose( R.or(R.__, {}), R.prop('attrs')), R.assoc('attrs'))
@@ -68,7 +49,17 @@ var Glass =
   
   // a formatting lens that goes from str[] to str
   Lens.classList = 
-    R.lens( R.compose( R.tail, R.split(' ')), R.join(' '))
+    R.lens( R.compose(R.reject(R.isEmpty), R.split(' ')), R.join(' '))
+    
+  
+  Lens.setAll = (each, parentLens) =>
+    R.converge( 
+      parentLens.set
+      ,[R.pipe( parentLens.view, R.map( each ))
+      , R.identity
+      ]
+    )
+    
   
   // essential lens operators
   Lens.view = R.view
@@ -76,17 +67,16 @@ var Glass =
   Lens.set = R.set 
   
   // common lens factory functions
-  Lens.prop = LensProp
-  Lens.path = LensPath
-  Lens.index = LensIndex
-  Lens.compose = LensCompose
+  Lens.prop = R.compose(_Lens, R.lensProp)
+  Lens.path = R.compose(_Lens, R.lensPath)
+  Lens.index = R.compose(_Lens, R.lensIndex)
+  Lens.compose = R.compose(_Lens,R.compose)
+  Lens.iso = R.compose(_Lens, ramdaLens.iso)
+  Lens.iso.from = ramdaLens.from
 
   return {
     component
     , Lens: Lens
     , State
-    , compose: R.compose
-    , pipe: R.pipe
-    , Stream: flyd
   }
 })()

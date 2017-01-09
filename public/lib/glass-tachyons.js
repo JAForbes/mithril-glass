@@ -19,4 +19,4 @@ var tachyons = {}
       tachyons.lens.set
       
     tachyons.updateChildren = 
-      classList => children.over( R.map( tachyons.lens.set(classList) ) )
+      classList => children => children.over( R.map( tachyons.lens.set(classList) ) )

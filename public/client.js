@@ -22,7 +22,7 @@ function Main(){
   
   // will use this builtin json lense to read/write our editedState tree to/from the page
   // a formatting lens for focusing on JSON
-  var json = Lens(x => JSON.stringify(x, null, 2), JSON.parse)
+  var json = Lens.iso(x => JSON.stringify(x, null, 2), JSON.parse)
   
   
   // Once you have chosen how to structure your state
@@ -40,8 +40,8 @@ function Main(){
   // a lens that can read/write to a `count` property on any object
   var valueLens = Lens.prop('count')
   
-  // a lens that converts string's to Number's on write
-  var numberLens = Lens(R.identity, Number)
+  // a lens that converts string's to Number's on write and read
+  var numberLens = Lens.iso(Number, Number)
 
   // a composition of the above lenses
   // we now have a lense that reads/writes from the count property
@@ -54,24 +54,24 @@ function Main(){
   var tabId = Lens.prop('tabId')
   
   
+  var tabTheme = tabPane.theme.Default()
   // Extremely experimental notion:
   // Use lenses to theme vnodes after the fact!
   // these functions can be used to add these classNames to the vnode
   const blueGrower = tachyons.update(['blue', 'grow-large'])
-  const redDimmerChildren = tachyons.updateChildren(['red', 'dim'])
   
   // Its recommended to avoid components in mithril-glass (except the top level)
   // Our entire app should simply use lenses to update state, leaving the views themselves pure
   return function(){
     return [
-      // A counter with red text that dims on hover
-      redDimmerChildren(counter(count, state))
+      
+      counter(count, state)
       
       // a label, just grabs the current count
       ,label(count, state)
       
-      // an unstyled tabPane
-      ,tabPane(tabContent, tabId, state)
+      
+      ,tabTheme(tabPane(tabContent, tabId, 0, state))
       
       // a button with blue text that grows on hover
       ,blueGrower(m('button', { onclick: () => state( editedState() ) }, 'Save Edits'))
