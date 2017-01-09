@@ -1,8 +1,14 @@
-// A tabbed pane
-//
-// tabContent is a lens with all the tab metadata
-// tabId is a lens of the current id
-// state is the state stream we will write to
+/**
+ * Lens State TabContent ->  Lens State String -> Number -> GlassState State -> VNode
+ * 
+ * A tabbed pane
+ * =============
+ * tabContent is a lens with all the tab metadata
+ * tabId is a lens of the current id
+ * tabIndex is 
+ * state is the state stream we will write to
+*/
+
 const tabPane = (tabContent, tabId, initialTabIndex, state) => {
   
   // Get the latest tabContent
@@ -44,6 +50,17 @@ const tabPane = (tabContent, tabId, initialTabIndex, state) => {
   )
 }
 
+/**
+ * Expose some lens for querying key parts of the virtual dom
+ * of this view.
+ * 
+ * By exposing these queries, users can avoid breaking their styles
+ * when the internal dom structure changes, and developers can
+ * freely modify their dom structure as long as these queries stay in sync.
+ * 
+ * Separating themes and the specific vnode struture also opens up the
+ * possibility of supporting multiple hyperscript structures.
+*/
 
 tabPane.ul = 
   G.Lens.compose( G.Lens.prop('children'), G.Lens.index(0) )
@@ -52,6 +69,11 @@ tabPane.li =
 tabPane.div = 
   G.Lens.compose( G.Lens.prop('children'), G.Lens.index(1) )
   
+/**
+ * Finds the currently selected tab
+ * Allows you to pass in a new selected tab and it will
+ * update in place.
+*/
 tabPane.selected =
   G.Lens.compose( 
     tabPane.li
@@ -66,6 +88,18 @@ tabPane.selected =
   
 tabPane.theme = {}
 
+
+/**
+ * A theme is a function that takes a vnode and returns a new vnode
+ * 
+ * By using lenss we can query parts of the vnode and modify it purely.
+ * Because each query returns a new vnode we can chain them together via
+ * compose.
+ * 
+ * You don't need to theme components this way.  In essence all lenses do
+ * is theme data in one way or another, so their a perfect match.
+ * 
+ */
 tabPane.theme.Default = function(){
   
   
