@@ -5,7 +5,7 @@ const counter = (count, state) => {
   
   // Emit different state objects depending on which button is clicked.
   return m('div'
-    ,m('button', { onclick: () => over( v => v + 1) }, '+')
+    ,m('button', { onclick: () => over( v => v + 1)  }, '+')
     ,m('button', { onclick: () => over( v => v - 1) }, '-')
   )
 }
